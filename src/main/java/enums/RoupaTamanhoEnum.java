@@ -1,6 +1,6 @@
 package enums;
 
-public enum Tamanho {
+public enum RoupaTamanhoEnum {
     INFANTIL(1),
     PP(2),
     P(3),
@@ -9,14 +9,14 @@ public enum Tamanho {
     GG(6);
 
     private int value;
-    private Tamanho(int cod) {
+    private RoupaTamanhoEnum(int cod) {
         this.value = cod;
     }
     public int getValue() {
         return value;
     }
-    public static Tamanho fromValue(int value) {
-        for (Tamanho tamanho : Tamanho.values()) {
+    public static RoupaTamanhoEnum fromValue(int value) {
+        for (RoupaTamanhoEnum tamanho : RoupaTamanhoEnum.values()) {
             if (tamanho.getValue() == value) {
                 return tamanho;
             }

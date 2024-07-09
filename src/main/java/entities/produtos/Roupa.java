@@ -1,7 +1,7 @@
 package entities.produtos;
 
 import enums.Sexo;
-import enums.Tamanho;
+import enums.RoupaTamanhoEnum;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -20,7 +20,7 @@ public class Roupa implements Serializable {
     private String descricao;
 
     @Enumerated(EnumType.ORDINAL)
-    private Tamanho tamanho;
+    private RoupaTamanhoEnum tamanho;
 
     @Enumerated(EnumType.ORDINAL)
     private Sexo sexo;
@@ -30,7 +30,7 @@ public class Roupa implements Serializable {
     public Roupa() {}
 
 
-    public Roupa(String descricao, Integer quantidade,Sexo sexo, Tamanho tamanho) {
+    public Roupa(String descricao, Integer quantidade,Sexo sexo, RoupaTamanhoEnum tamanho) {
         this.descricao = descricao;
         this.sexo = sexo;
         this.tamanho = tamanho;
@@ -58,11 +58,11 @@ public class Roupa implements Serializable {
         this.descricao = descricao;
     }
 
-    public Tamanho getTamanho() {
+    public RoupaTamanhoEnum getTamanho() {
         return tamanho;
     }
 
-    public void setTamanho(Tamanho tamanho) {
+    public void setTamanho(RoupaTamanhoEnum tamanho) {
         this.tamanho = tamanho;
     }
 
