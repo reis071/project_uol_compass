@@ -1,14 +1,18 @@
-import entities.produtos.Higiene;
+import entities.produtos.Alimento;
 import enums.HigieneEnum;
+import enums.RoupaTamanhoEnum;
+import enums.Sexo;
+import enums.UnidadeMedida;
+import repositories.AlimentoRepository;
 import repositories.HigieneRepository;
 import repositories.RoupaRepository;
-import enums.Sexo;
-import enums.RoupaTamanhoEnum;
 import entities.produtos.Roupa;
+import entities.produtos.Higiene;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import java.util.Date;
 import java.util.Scanner;
 
 public class Main {
@@ -17,12 +21,13 @@ public class Main {
         EntityManager em = emf.createEntityManager();
         RoupaRepository roupaRepository = new RoupaRepository(em);
         HigieneRepository higieneRepository = new HigieneRepository(em);
+        AlimentoRepository alimentoRepository = new AlimentoRepository(em);
         Scanner input = new Scanner(System.in);
 
         boolean exit = false;
         while (!exit) {
             System.out.println("Menu");
-            System.out.println("1- DOAR ");
+            System.out.println("1- DOAR");
             System.out.println("2- ENCERRAR");
             String opcao = input.next();
 
@@ -32,7 +37,8 @@ public class Main {
                     while (!exitDoar) {
                         System.out.println("1- DOAR ROUPA");
                         System.out.println("2- DOAR PRODUTO DE HIGIENE");
-                        System.out.println("3- VOLTAR AO MENU PRINCIPAL");
+                        System.out.println("3- DOAR ALIMENTO");
+                        System.out.println("4- VOLTAR AO MENU PRINCIPAL");
                         String opcaoDoar = input.next();
 
                         switch (opcaoDoar) {
@@ -96,7 +102,34 @@ public class Main {
                                 higieneRepository.save(higiene);
                                 break;
                             case "3":
-                                exitDoar = true;  // Sair do loop de doação e voltar ao menu principal
+                                System.out.print("Digite a DESCRIÇÃO do alimento: ");
+                                String descricaoAlimento = input.next();
+
+                                System.out.print("Digite a QUANTIDADE do alimento: ");
+                                Double quantidadeAlimento = input.nextDouble();
+
+                                UnidadeMedida unidadeMedida = null;
+                                while (unidadeMedida == null) {
+                                    for (UnidadeMedida valorUnidade : UnidadeMedida.values()) {
+                                        System.out.println(valorUnidade + " - " + valorUnidade.getValue());
+                                    }
+                                    System.out.print("Selecione a UNIDADE de medida: ");
+                                    int opcaoUnidade = input.nextInt();
+                                    unidadeMedida = UnidadeMedida.fromValue(opcaoUnidade);
+                                    if (unidadeMedida == null) {
+                                        System.out.println("UNIDADE INVÁLIDA");
+                                    }
+                                }
+
+                                System.out.print("Digite a DATA DE VALIDADE do alimento (formato: yyyy-MM-dd): ");
+                                String dataValidadeStr = input.next();
+                                Date dataValidade = java.sql.Date.valueOf(dataValidadeStr);
+
+                                Alimento alimento = new Alimento(descricaoAlimento, quantidadeAlimento, unidadeMedida, dataValidade);
+                                alimentoRepository.save(alimento);
+                                break;
+                            case "4":
+                                exitDoar = true; // Sair do loop de doação e voltar ao menu principal
                                 break;
                             default:
                                 System.out.println("Opção inválida!");

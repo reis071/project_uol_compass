@@ -25,6 +25,7 @@ public class Roupa implements Serializable {
     @Enumerated(EnumType.ORDINAL)
     private Sexo sexo;
 
+    @Column(nullable = false)
     private Integer quantidade;
 
     public Roupa() {}
