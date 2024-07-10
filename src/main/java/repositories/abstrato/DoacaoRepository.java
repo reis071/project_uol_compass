@@ -1,50 +1,47 @@
-package repositories;
+package repositories.abstrato;
 
-import entities.produtos.Roupa;
+import entities.abstrato.Doacao;
 
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import java.util.List;
 
-public class RoupaRepository {
-
-    @PersistenceContext
+public class DoacaoRepository {
     private EntityManager em;
 
-    public RoupaRepository(EntityManager em) {
+    public DoacaoRepository(EntityManager em) {
         this.em = em;
     }
 
     @Transactional
-    public void save(Roupa roupa) {
+    public void save(Doacao doacao) {
         try {
             em.getTransaction().begin();
-            em.persist(roupa);
+            em.persist(doacao);
             em.getTransaction().commit();
         } catch (Exception e) {
             em.getTransaction().rollback();
-            throw new RuntimeException("Erro ao salvar a roupa", e);
+            throw new RuntimeException("Erro ao salvar a doação", e);
         }
     }
 
-    public Roupa findById(Long id) {
-        return em.find(Roupa.class, id);
+    public Doacao findById(Long id) {
+        return em.find(Doacao.class, id);
     }
 
-    public List<Roupa> findAll() {
-        return em.createQuery("FROM Roupa", Roupa.class).getResultList();
+    public List<Doacao> findAll() {
+        return em.createQuery("FROM Doacao", Doacao.class).getResultList();
     }
 
     @Transactional
-    public void update(Roupa roupa) {
+    public void update(Doacao doacao) {
         try {
             em.getTransaction().begin();
-            em.merge(roupa);
+            em.merge(doacao);
             em.getTransaction().commit();
         } catch (Exception e) {
             em.getTransaction().rollback();
-            throw new RuntimeException("Erro ao atualizar a roupa", e);
+            throw new RuntimeException("Erro ao atualizar a doação", e);
         }
     }
 
@@ -52,14 +49,14 @@ public class RoupaRepository {
     public void delete(Long id) {
         try {
             em.getTransaction().begin();
-            Roupa roupa = em.find(Roupa.class, id);
-            if (roupa != null) {
-                em.remove(roupa);
+            Doacao doacao = em.find(Doacao.class, id);
+            if (doacao != null) {
+                em.remove(doacao);
             }
             em.getTransaction().commit();
         } catch (Exception e) {
             em.getTransaction().rollback();
-            throw new RuntimeException("Erro ao deletar a roupa", e);
+            throw new RuntimeException("Erro ao deletar a doação", e);
         }
     }
 }

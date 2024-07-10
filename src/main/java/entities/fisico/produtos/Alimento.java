@@ -1,11 +1,14 @@
-package entities.produtos;
+package entities.fisico.produtos;
 
+import entities.abstrato.Doacao;
 import enums.UnidadeMedida;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 public class Alimento implements Serializable {
@@ -29,7 +32,14 @@ public class Alimento implements Serializable {
     @Column(nullable = false)
     private Date dataValidade;
 
+    @ManyToMany(mappedBy = "alimentos")
+    Set<Doacao> doacoes = new HashSet<>();
+
     public Alimento() {}
+
+    public Set<Doacao> getDoacoes() {
+        return doacoes;
+    }
 
     public Alimento(String descricao, Double quantidade, UnidadeMedida unidadeMedida, Date dataValidade) {
         this.descricao = descricao;

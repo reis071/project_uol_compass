@@ -1,10 +1,13 @@
-package entities.produtos;
+package entities.fisico.produtos;
 
+import entities.abstrato.Doacao;
 import enums.HigieneEnum;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 public class Higiene implements Serializable {
@@ -22,7 +25,18 @@ public class Higiene implements Serializable {
     @Enumerated(EnumType.ORDINAL)
     private HigieneEnum tipoProduto;
 
+    @ManyToMany(mappedBy = "higienes")
+    Set<Doacao> doacoes = new HashSet<>();
+
     public Higiene() {}
+
+    public Set<Doacao> getDoacoes() {
+        return doacoes;
+    }
+
+    public HigieneEnum getTipoProduto() {
+        return tipoProduto;
+    }
 
     public Higiene(HigieneEnum tipoProduto, String descricao) {
         this.descricao = descricao;

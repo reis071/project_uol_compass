@@ -1,7 +1,5 @@
 package enums;
 
-import entities.produtos.Alimento;
-
 public enum UnidadeMedida {
     G(1),
     KG(2),

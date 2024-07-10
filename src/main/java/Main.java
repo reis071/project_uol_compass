@@ -1,17 +1,20 @@
-import entities.produtos.Alimento;
+import entities.abstrato.Doacao;
+import entities.fisico.produtos.Alimento;
 import enums.HigieneEnum;
 import enums.RoupaTamanhoEnum;
 import enums.Sexo;
 import enums.UnidadeMedida;
-import repositories.AlimentoRepository;
-import repositories.HigieneRepository;
-import repositories.RoupaRepository;
-import entities.produtos.Roupa;
-import entities.produtos.Higiene;
+import repositories.abstrato.DoacaoRepository;
+import repositories.fisico.produto.AlimentoRepository;
+import repositories.fisico.produto.HigieneRepository;
+import repositories.fisico.produto.RoupaRepository;
+import entities.fisico.produtos.Roupa;
+import entities.fisico.produtos.Higiene;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Scanner;
 
@@ -22,6 +25,7 @@ public class Main {
         RoupaRepository roupaRepository = new RoupaRepository(em);
         HigieneRepository higieneRepository = new HigieneRepository(em);
         AlimentoRepository alimentoRepository = new AlimentoRepository(em);
+        DoacaoRepository doacaoRepository = new DoacaoRepository(em);
         Scanner input = new Scanner(System.in);
 
         boolean exit = false;
@@ -33,12 +37,12 @@ public class Main {
 
             switch (opcao) {
                 case "1":
+                    Doacao doacao = new Doacao(LocalDateTime.now());
+
                     boolean exitDoar = false;
                     while (!exitDoar) {
-                        System.out.println("1- DOAR ROUPA");
-                        System.out.println("2- DOAR PRODUTO DE HIGIENE");
-                        System.out.println("3- DOAR ALIMENTO");
-                        System.out.println("4- VOLTAR AO MENU PRINCIPAL");
+                        System.out.println("1- DOAR PRODUTOS");
+                        System.out.println("2- VOLTAR AO MENU PRINCIPAL");
                         String opcaoDoar = input.next();
 
                         switch (opcaoDoar) {
@@ -62,7 +66,7 @@ public class Main {
                                 }
 
                                 Sexo sexo = null;
-                                while (sexo == null) {
+                                while (true) {
                                     for (Sexo valorSexo : Sexo.values()) {
                                         System.out.println(valorSexo + " - " + valorSexo.getValue());
                                     }
@@ -72,16 +76,10 @@ public class Main {
                                         System.out.println("SEXO INVÁLIDO");
                                     } else {
                                         sexo = Sexo.fromValue(opcaoSexo);
+                                        break;
                                     }
                                 }
 
-                                System.out.print("Digite a QUANTIDADE de roupa: ");
-                                int quantidadeRoupa = input.nextInt();
-
-                                Roupa roupa = new Roupa(descricaoRoupa, quantidadeRoupa, sexo, tamanho);
-                                roupaRepository.save(roupa);
-                                break;
-                            case "2":
                                 System.out.print("Digite a DESCRIÇÃO do produto de higiene: ");
                                 String descricaoHigiene = input.next();
 
@@ -98,10 +96,6 @@ public class Main {
                                     }
                                 }
 
-                                Higiene higiene = new Higiene(tipoProduto, descricaoHigiene);
-                                higieneRepository.save(higiene);
-                                break;
-                            case "3":
                                 System.out.print("Digite a DESCRIÇÃO do alimento: ");
                                 String descricaoAlimento = input.next();
 
@@ -115,20 +109,42 @@ public class Main {
                                     }
                                     System.out.print("Selecione a UNIDADE de medida: ");
                                     int opcaoUnidade = input.nextInt();
-                                    unidadeMedida = UnidadeMedida.fromValue(opcaoUnidade);
-                                    if (unidadeMedida == null) {
+                                    if (opcaoUnidade < 1 || opcaoUnidade > 4 ) {
                                         System.out.println("UNIDADE INVÁLIDA");
+                                    }else{
+                                        unidadeMedida = UnidadeMedida.fromValue(opcaoUnidade);
                                     }
                                 }
 
                                 System.out.print("Digite a DATA DE VALIDADE do alimento (formato: yyyy-MM-dd): ");
                                 String dataValidadeStr = input.next();
+
                                 Date dataValidade = java.sql.Date.valueOf(dataValidadeStr);
+
+                                Roupa roupa = new Roupa(descricaoRoupa, sexo, tamanho);
+                                roupaRepository.save(roupa);
+
+                                Higiene higiene = new Higiene(tipoProduto, descricaoHigiene);
+                                higieneRepository.save(higiene);
 
                                 Alimento alimento = new Alimento(descricaoAlimento, quantidadeAlimento, unidadeMedida, dataValidade);
                                 alimentoRepository.save(alimento);
-                                break;
-                            case "4":
+
+                                doacao.getAlimentos().add(alimento);
+                                doacao.getHigienes().add(higiene);
+                                doacao.getRoupas().add(roupa);
+
+                                System.out.print("Deseja Continuar doando (S/N)?");
+                                String continuarDoacao = input.next();
+                                if (continuarDoacao.equals("1")) {
+                                    continue;
+                                }else{
+                                    doacaoRepository.save(doacao);
+                                    break;
+                                }
+
+
+                            case "2":
                                 exitDoar = true; // Sair do loop de doação e voltar ao menu principal
                                 break;
                             default:

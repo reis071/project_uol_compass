@@ -1,11 +1,14 @@
-package entities.produtos;
+package entities.fisico.produtos;
 
+import entities.abstrato.Doacao;
 import enums.Sexo;
 import enums.RoupaTamanhoEnum;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 public class Roupa implements Serializable {
@@ -25,30 +28,26 @@ public class Roupa implements Serializable {
     @Enumerated(EnumType.ORDINAL)
     private Sexo sexo;
 
-    @Column(nullable = false)
-    private Integer quantidade;
+    public Set<Doacao> getDoacoes() {
+        return doacoes;
+    }
+
+    @ManyToMany(mappedBy = "roupas")
+    Set<Doacao> doacoes = new HashSet<>();
 
     public Roupa() {}
 
 
-    public Roupa(String descricao, Integer quantidade,Sexo sexo, RoupaTamanhoEnum tamanho) {
+    public Roupa(String descricao,Sexo sexo, RoupaTamanhoEnum tamanho) {
         this.descricao = descricao;
         this.sexo = sexo;
         this.tamanho = tamanho;
-        this.quantidade = quantidade;
+
     }
 
     public Long getId() {
         return id;
     }
-    public Integer getQuantidade() {
-        return quantidade;
-    }
-
-    public void setQuantidade(Integer quantidade) {
-        this.quantidade = quantidade;
-    }
-
 
 
     public String getDescricao() {

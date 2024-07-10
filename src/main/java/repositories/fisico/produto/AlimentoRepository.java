@@ -1,6 +1,6 @@
-package repositories;
+package repositories.fisico.produto;
 
-import entities.produtos.Alimento;
+import entities.fisico.produtos.Alimento;
 import jakarta.persistence.PersistenceContext;
 
 import javax.persistence.EntityManager;
