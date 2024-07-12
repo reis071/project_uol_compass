@@ -15,13 +15,15 @@ public class CentroDistribuicao implements Serializable {
     @Column(nullable = false)
     private String nome;
 
+    public CentroDistribuicao(){}
+    public CentroDistribuicao(long l, String nome) {
+        this.id = id;
+        this.nome = nome;
+    }
+
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getNome() {

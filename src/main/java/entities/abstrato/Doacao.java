@@ -7,9 +7,7 @@ import entities.fisico.produtos.Roupa;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Entity
 public class Doacao implements Serializable {
@@ -24,26 +22,30 @@ public class Doacao implements Serializable {
     @JoinTable( name = "tb_produto_doacao_alimento",
             joinColumns = @JoinColumn(name = "id_doacao"),
             inverseJoinColumns = @JoinColumn(name = "id_alimento"))
-    List<Alimento> alimentos = new ArrayList<>();
+    private Set<Alimento> alimentos = new HashSet<>();
 
     @ManyToMany
     @JoinTable( name = "tb_produto_doacao_higiene",
             joinColumns = @JoinColumn(name = "id_doacao"), inverseJoinColumns = @JoinColumn(name = "id_higiene"))
-    List<Higiene> higienes = new ArrayList<>();
+    private Set<Higiene> higienes = new HashSet<>();
 
     @ManyToMany
     @JoinTable( name = "tb_produto_doacao_roupa", joinColumns = @JoinColumn(name = "id_doacao"), inverseJoinColumns = @JoinColumn(name = "id_roupa"))
-    List<Roupa> roupas = new ArrayList<>();
+    private Set<Roupa> roupas = new HashSet<>();
 
-    public List<Alimento> getAlimentos() {
+    @OneToMany(mappedBy = "id.doacao")
+    private Set<TransferenciaDoacaoCentro> transferencia = new HashSet<>();
+
+
+    public Set<Alimento> getAlimentos() {
         return alimentos;
     }
 
-    public List<Higiene> getHigienes() {
+    public Set<Higiene> getHigienes() {
         return higienes;
     }
 
-    public List<Roupa> getRoupas() {
+    public Set<Roupa> getRoupas() {
         return roupas;
     }
 

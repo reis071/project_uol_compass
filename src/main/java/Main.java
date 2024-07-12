@@ -1,10 +1,14 @@
 import entities.abstrato.Doacao;
+import entities.abstrato.TransferenciaDoacaoCentro;
+import entities.fisico.estrutural.CentroDistribuicao;
 import entities.fisico.produtos.Alimento;
 import enums.HigieneEnum;
 import enums.RoupaTamanhoEnum;
 import enums.Sexo;
 import enums.UnidadeMedida;
+import initializerData.DataInitializer;
 import repositories.abstrato.DoacaoRepository;
+import repositories.abstrato.TransferenciaDoacaoCentroRepository;
 import repositories.fisico.produto.AlimentoRepository;
 import repositories.fisico.produto.HigieneRepository;
 import repositories.fisico.produto.RoupaRepository;
@@ -25,7 +29,9 @@ public class Main {
         RoupaRepository roupaRepository = new RoupaRepository(em);
         HigieneRepository higieneRepository = new HigieneRepository(em);
         AlimentoRepository alimentoRepository = new AlimentoRepository(em);
+        TransferenciaDoacaoCentroRepository transferenciaDoacaoCentroRepository = new TransferenciaDoacaoCentroRepository(em);
         DoacaoRepository doacaoRepository = new DoacaoRepository(em);
+        DataInitializer.initialize(em);
         Scanner input = new Scanner(System.in);
 
         boolean exit = false;
@@ -37,8 +43,50 @@ public class Main {
 
             switch (opcao) {
                 case "1":
-                    Doacao doacao = new Doacao(LocalDateTime.now());
 
+                    Doacao doacao = new Doacao(LocalDateTime.now());
+                    CentroDistribuicao centroDistribuicao = null;
+
+                    // Escolha do centro de distribuição
+                    System.out.println("Escolha o centro de distribuição:");
+                    System.out.println("1- Centro de Distribuição Esperança");
+                    System.out.println("2- Centro de Distribuição Prosperidade");
+                    System.out.println("3- Centro de Distribuição Reconstrução");
+                    int opcaoCentro = input.nextInt();
+                    Long centroId = null;
+
+                    switch (opcaoCentro) {
+                        case 1:
+                            centroDistribuicao = em.find(CentroDistribuicao.class, 1L); // Substitua 1L pelo ID correto
+                            centroId = 1L;
+                            break;
+                        case 2:
+                            centroDistribuicao = em.find(CentroDistribuicao.class, 2L); // Substitua 2L pelo ID correto
+                            centroId = 2L;
+                            break;
+                        case 3:
+                            centroDistribuicao = em.find(CentroDistribuicao.class, 3L); // Substitua 3L pelo ID correto
+                            centroId = 3L;
+                            break;
+                        default:
+                            System.out.println("Opção inválida!");
+                            break;
+                    }
+
+                    if (centroDistribuicao != null) {
+                        System.out.println("Centro de Distribuição selecionado: " + centroDistribuicao.getNome());
+
+                        // Verifique se o EntityManager está configurado corretamente
+                        try {
+                            Long count = transferenciaDoacaoCentroRepository.countAlimentosByCentroDistribuicao(centroId);
+                            System.out.println("Total de alimentos no centro de distribuição: " + count);
+                        } catch (Exception e) {
+                            System.out.println("Erro ao contar alimentos: " + e.getMessage());
+                            e.printStackTrace();
+                        }
+                    } else {
+                        System.out.println("Centro de Distribuição não encontrado.");
+                    }
                     boolean exitDoar = false;
                     while (!exitDoar) {
                         System.out.println("1- DOAR PRODUTOS");
@@ -122,31 +170,30 @@ public class Main {
                                 Date dataValidade = java.sql.Date.valueOf(dataValidadeStr);
 
                                 Roupa roupa = new Roupa(descricaoRoupa, sexo, tamanho);
-                                roupaRepository.save(roupa);
-
                                 Higiene higiene = new Higiene(tipoProduto, descricaoHigiene);
-                                higieneRepository.save(higiene);
+
 
                                 Alimento alimento = new Alimento(descricaoAlimento, quantidadeAlimento, unidadeMedida, dataValidade);
-                                alimentoRepository.save(alimento);
+
 
                                 doacao.getAlimentos().add(alimento);
                                 doacao.getHigienes().add(higiene);
                                 doacao.getRoupas().add(roupa);
 
-                                System.out.print("Deseja Continuar doando (S/N)?");
+                                roupaRepository.save(roupa);
+                                higieneRepository.save(higiene);
+                                alimentoRepository.save(alimento);
+                                System.out.print("Deseja Continuar doando (S/N)? ");
                                 String continuarDoacao = input.next();
-                                if (continuarDoacao.equals("1")) {
-                                    continue;
-                                }else{
+                                if (!continuarDoacao.equalsIgnoreCase("S")) {
+
                                     doacaoRepository.save(doacao);
-                                    break;
+                                    TransferenciaDoacaoCentro transferenciaDoacaoCentro = new TransferenciaDoacaoCentro(doacao, centroDistribuicao);
+                                    transferenciaDoacaoCentroRepository.save(transferenciaDoacaoCentro);
+                                    break; // Sair do switch case, mas continuar no loop principal
                                 }
-
-
-                            case "2":
-                                exitDoar = true; // Sair do loop de doação e voltar ao menu principal
                                 break;
+
                             default:
                                 System.out.println("Opção inválida!");
                                 break;
@@ -162,6 +209,7 @@ public class Main {
                     System.out.println("Opção inválida!");
                     break;
             }
+
         }
     }
 }
