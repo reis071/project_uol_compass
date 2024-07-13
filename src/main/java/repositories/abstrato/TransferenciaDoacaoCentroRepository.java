@@ -41,15 +41,7 @@ public class TransferenciaDoacaoCentroRepository {
         return em.find(TransferenciaDoacaoCentro.class, pk);
     }
 
-    public Long countAlimentosByCentroDistribuicao(Long centroDistribuicaoId) {
-        String jpql = "SELECT COUNT(a) FROM TransferenciaDoacaoCentro tdc " +
-                "JOIN tdc.id.doacao d " +
-                "JOIN d.alimentos a " +
-                "WHERE tdc.id.id_centroDistribuicao.id = :centroDistribuicaoId";
-        TypedQuery<Long> query = em.createQuery(jpql, Long.class);
-        query.setParameter("centroDistribuicaoId", centroDistribuicaoId);
-        return query.getSingleResult();
-    }
+
 
     @Transactional
     public void delete(TransferenciaDoacaoCentroPk pk) {

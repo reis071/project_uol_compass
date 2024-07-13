@@ -1,5 +1,6 @@
 import entities.abstrato.Doacao;
 import entities.abstrato.TransferenciaDoacaoCentro;
+import entities.fisico.estrutural.Abrigo;
 import entities.fisico.estrutural.CentroDistribuicao;
 import entities.fisico.produtos.Alimento;
 import enums.HigieneEnum;
@@ -9,11 +10,13 @@ import enums.UnidadeMedida;
 import initializerData.DataInitializer;
 import repositories.abstrato.DoacaoRepository;
 import repositories.abstrato.TransferenciaDoacaoCentroRepository;
+import repositories.fisico.estrutural.AbrigoRepository;
 import repositories.fisico.produto.AlimentoRepository;
 import repositories.fisico.produto.HigieneRepository;
 import repositories.fisico.produto.RoupaRepository;
 import entities.fisico.produtos.Roupa;
 import entities.fisico.produtos.Higiene;
+import services.fisico.estrutural.AbrigoService;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -31,6 +34,7 @@ public class Main {
         AlimentoRepository alimentoRepository = new AlimentoRepository(em);
         TransferenciaDoacaoCentroRepository transferenciaDoacaoCentroRepository = new TransferenciaDoacaoCentroRepository(em);
         DoacaoRepository doacaoRepository = new DoacaoRepository(em);
+        AbrigoRepository abrigoRepository = new AbrigoRepository(em);
         DataInitializer.initialize(em);
         Scanner input = new Scanner(System.in);
 
@@ -38,7 +42,9 @@ public class Main {
         while (!exit) {
             System.out.println("Menu");
             System.out.println("1- DOAR");
-            System.out.println("2- ENCERRAR");
+            System.out.println("2- QUANTIDADE DE PPRODUTOS POR CENTRO");
+            System.out.println("3- GERENCIAR ABRIGOS");
+            System.out.println("4- ENCERRAR");
             String opcao = input.next();
 
             switch (opcao) {
@@ -48,44 +54,26 @@ public class Main {
                     CentroDistribuicao centroDistribuicao = null;
 
                     // Escolha do centro de distribuição
-                    System.out.println("Escolha o centro de distribuição:");
+                    System.out.println("Escolha o centro de distribuição a qual ira Doar:");
                     System.out.println("1- Centro de Distribuição Esperança");
                     System.out.println("2- Centro de Distribuição Prosperidade");
                     System.out.println("3- Centro de Distribuição Reconstrução");
                     int opcaoCentro = input.nextInt();
                     Long centroId = null;
-
                     switch (opcaoCentro) {
                         case 1:
                             centroDistribuicao = em.find(CentroDistribuicao.class, 1L); // Substitua 1L pelo ID correto
-                            centroId = 1L;
                             break;
                         case 2:
                             centroDistribuicao = em.find(CentroDistribuicao.class, 2L); // Substitua 2L pelo ID correto
-                            centroId = 2L;
                             break;
                         case 3:
                             centroDistribuicao = em.find(CentroDistribuicao.class, 3L); // Substitua 3L pelo ID correto
-                            centroId = 3L;
+
                             break;
                         default:
                             System.out.println("Opção inválida!");
                             break;
-                    }
-
-                    if (centroDistribuicao != null) {
-                        System.out.println("Centro de Distribuição selecionado: " + centroDistribuicao.getNome());
-
-                        // Verifique se o EntityManager está configurado corretamente
-                        try {
-                            Long count = transferenciaDoacaoCentroRepository.countAlimentosByCentroDistribuicao(centroId);
-                            System.out.println("Total de alimentos no centro de distribuição: " + count);
-                        } catch (Exception e) {
-                            System.out.println("Erro ao contar alimentos: " + e.getMessage());
-                            e.printStackTrace();
-                        }
-                    } else {
-                        System.out.println("Centro de Distribuição não encontrado.");
                     }
                     boolean exitDoar = false;
                     while (!exitDoar) {
@@ -180,17 +168,20 @@ public class Main {
                                 doacao.getHigienes().add(higiene);
                                 doacao.getRoupas().add(roupa);
 
-                                roupaRepository.save(roupa);
-                                higieneRepository.save(higiene);
-                                alimentoRepository.save(alimento);
+
                                 System.out.print("Deseja Continuar doando (S/N)? ");
                                 String continuarDoacao = input.next();
                                 if (!continuarDoacao.equalsIgnoreCase("S")) {
-
+                                    roupaRepository.save(roupa);
+                                    higieneRepository.save(higiene);
+                                    alimentoRepository.save(alimento);
                                     doacaoRepository.save(doacao);
                                     TransferenciaDoacaoCentro transferenciaDoacaoCentro = new TransferenciaDoacaoCentro(doacao, centroDistribuicao);
                                     transferenciaDoacaoCentroRepository.save(transferenciaDoacaoCentro);
                                     break; // Sair do switch case, mas continuar no loop principal
+                                }
+                                else{
+                                    exitDoar = true;
                                 }
                                 break;
 
@@ -201,6 +192,113 @@ public class Main {
                     }
                     break; // Necessário para evitar cair no case "2" quando sair do loop de doação
                 case "2":
+                    for (long i = 1L; i <= 3; i++) {
+                        centroDistribuicao = em.find(CentroDistribuicao.class, i);
+                        if (centroDistribuicao != null) {
+                            System.out.println("Centro de Distribuição selecionado: " + centroDistribuicao.getNome());
+
+                            long quantidadeAlimentos = centroDistribuicao.countAlimentos();
+                            long quantidadeRoupas = centroDistribuicao.countRoupas();
+                            long quantidadeHigienes = centroDistribuicao.countHigienes();
+
+                            System.out.println("Centro de Distribuição: " + centroDistribuicao.getNome());
+                            System.out.println("Quantidade de Alimentos: " + quantidadeAlimentos);
+                            System.out.println("Quantidade de Roupas: " + quantidadeRoupas);
+                            System.out.println("Quantidade de Produtos de Higiene: " + quantidadeHigienes);
+                        } else {
+                            System.out.println("Centro de Distribuição não encontrado.");
+                        }
+                    }
+                    break;
+                case "3":
+                    boolean exitAbrigos = false;
+                    while (!exitAbrigos) {
+                        System.out.println("Gerenciamento de Abrigos");
+                        System.out.println("1- Cadastrar Abrigo");
+                        System.out.println("2- Listar Abrigos");
+                        System.out.println("3- Editar Abrigo");
+                        System.out.println("4- Excluir Abrigo");
+                        System.out.println("5- Procurar Abrigo");
+                        System.out.println("6- Voltar ao Menu Principal");
+                        AbrigoService abrigoService = new AbrigoService(abrigoRepository);
+
+                        String opcaoAbrigo = input.next();
+                        switch (opcaoAbrigo) {
+                            case "1":
+                                System.out.println("Digite NOME do Abrigo");
+                                String nome = input.next();
+
+                                System.out.println("Digite RESPONSAVEL do Abrigo");
+                                String responsavel = input.next();
+
+                                System.out.println("Digite TELEFONE do Abrigo");
+                                String telefone = input.next();
+
+                                System.out.println("Digite EMAIL do Abrigo");
+                                String email = input.next();
+
+                                System.out.println("Digite CAPACIDADE do Abrigo");
+                                int capacidade = input.nextInt();
+
+                                abrigoService.cadastrarAbrigo(nome, responsavel, telefone, email, capacidade);
+                                break;
+                            case "2":
+                                abrigoService.listarAbrigos();
+                                break;
+                            case "3":
+                                System.out.println("Digite o ID do Abrigo");
+                                long id = input.nextLong();
+
+                                System.out.println("Digite NOME do Abrigo");
+                                nome = input.next();
+
+                                System.out.println("Digite RESPONSAVEL do Abrigo");
+                                responsavel = input.next();
+
+                                System.out.println("Digite TELEFONE do Abrigo");
+                                telefone = input.next();
+
+                                System.out.println("Digite EMAIL do Abrigo");
+                                email = input.next();
+
+                                System.out.println("Digite CAPACIDADE do Abrigo");
+                                capacidade = input.nextInt();
+
+                                abrigoService.editarAbrigo(id, nome, responsavel, telefone, email, capacidade);
+                                break;
+                            case "4":
+                                System.out.println("Digite o ID do Abrigo");
+                                id = input.nextLong();
+                                abrigoService.excluirAbrigo(id);
+                                break;
+                            case "5":
+                                System.out.println("Digite o ID do Abrigo que deseja visualizar");
+                                id = input.nextLong();
+                                Abrigo abrigo = abrigoService.buscarAbrigoPorId(id);
+                                if (abrigo != null) {
+                                    System.out.println("ID: " + abrigo.getId());
+                                    System.out.println("Nome: " + abrigo.getNome());
+                                    System.out.println("Responsável: " + abrigo.getResponsavel());
+                                    System.out.println("Telefone: " + abrigo.getTelefone());
+                                    System.out.println("Email: " + abrigo.getEmail());
+                                    System.out.println("Capacidade: " + abrigo.getCapacidade());
+                                    System.out.println("Ocupação: " + abrigoService.calcularOcupacao(id));
+                                    System.out.println("Quantidade de Alimentos: " + abrigoService.countAlimentosRecebidos(id));
+                                    System.out.println("Quantidade de Roupas: " + abrigoService.countRoupasRecebidas(id));
+                                    System.out.println("Quantidade de Produtos de Higiene: " + abrigoService.countHigienesRecebidas(id));
+                                    System.out.println("-------------------------");
+                                } else {
+                                    System.out.println("Abrigo não encontrado.");
+                                }
+                            case "6":
+                                exitAbrigos = true;
+                                break;
+                            default:
+                                System.out.println("Opcao Inexistente");
+                        }
+                    }
+                    break;
+                case "4":
                     em.close();
                     emf.close();
                     exit = true;

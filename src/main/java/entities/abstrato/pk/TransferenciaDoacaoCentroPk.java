@@ -19,13 +19,13 @@ public class TransferenciaDoacaoCentroPk implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "id_centroDistribuicao")
-    private CentroDistribuicao id_centroDistribuicao;
+    private CentroDistribuicao centroDistribuicao;
 
     public TransferenciaDoacaoCentroPk() {}
 
     public TransferenciaDoacaoCentroPk(Doacao doacao, CentroDistribuicao centroDistribuicao) {
         this.doacao = doacao;
-        this.id_centroDistribuicao = centroDistribuicao;
+        this.centroDistribuicao = centroDistribuicao;
     }
 
     // Getters and Setters
@@ -38,17 +38,14 @@ public class TransferenciaDoacaoCentroPk implements Serializable {
         this.doacao = id_doacao;
     }
 
-    public CentroDistribuicao getId_centroDistribuicao() {
-        return id_centroDistribuicao;
+    public CentroDistribuicao getCentroDistribuicao() {
+        return centroDistribuicao;
     }
 
-    public void setId_centroDistribuicao(CentroDistribuicao id_centroDistribuicao) {
-        this.id_centroDistribuicao = id_centroDistribuicao;
+    public void setCentroDistribuicao(CentroDistribuicao centroDistribuicao) {
+        this.centroDistribuicao = centroDistribuicao;
     }
 
-    // Equals and HashCode (optional but recommended)
-    // Ensure you override equals and hashCode properly for correct comparison
-    // of embedded IDs.
 
     @Override
     public boolean equals(Object o) {
@@ -58,13 +55,13 @@ public class TransferenciaDoacaoCentroPk implements Serializable {
         TransferenciaDoacaoCentroPk that = (TransferenciaDoacaoCentroPk) o;
 
         if (!doacao.equals(that.doacao)) return false;
-        return id_centroDistribuicao.equals(that.id_centroDistribuicao);
+        return centroDistribuicao.equals(that.centroDistribuicao);
     }
 
     @Override
     public int hashCode() {
         int result = doacao.hashCode();
-        result = 31 * result + id_centroDistribuicao.hashCode();
+        result = 31 * result + centroDistribuicao.hashCode();
         return result;
     }
 }

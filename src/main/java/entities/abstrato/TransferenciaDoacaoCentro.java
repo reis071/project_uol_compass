@@ -21,23 +21,23 @@ public class TransferenciaDoacaoCentro implements Serializable {
     public TransferenciaDoacaoCentro(Doacao doacao, CentroDistribuicao centroDistribuicao) {
         super();
         id.setDoacao(doacao);
-        id.setId_centroDistribuicao(centroDistribuicao);
+        id.setCentroDistribuicao(centroDistribuicao);
+    }
+
+    public void setDoacao(Doacao doacao) {
+        id.setDoacao(doacao);
     }
 
     public Doacao getDoacao() {
         return id.getDoacao();
     }
 
-    public void setDoacao(Doacao doacao) {
-        this.id.setDoacao(doacao);
-    }
-
     public CentroDistribuicao getCentroDistribuicao() {
-        return id.getId_centroDistribuicao();
+        return id.getCentroDistribuicao();
     }
 
     public void setCentroDistribuicao(CentroDistribuicao centroDistribuicao) {
-        this.id.setId_centroDistribuicao(centroDistribuicao);
+        id.setCentroDistribuicao(centroDistribuicao);
     }
 
     public TransferenciaDoacaoCentroPk getId() {

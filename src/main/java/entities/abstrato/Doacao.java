@@ -1,5 +1,6 @@
 package entities.abstrato;
 
+import entities.fisico.estrutural.Abrigo;
 import entities.fisico.produtos.Alimento;
 import entities.fisico.produtos.Higiene;
 import entities.fisico.produtos.Roupa;
@@ -18,6 +19,10 @@ public class Doacao implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne
+    @JoinColumn(name = "abrigo_id")
+    private Abrigo abrigo;
+
     @ManyToMany
     @JoinTable( name = "tb_produto_doacao_alimento",
             joinColumns = @JoinColumn(name = "id_doacao"),
@@ -33,10 +38,6 @@ public class Doacao implements Serializable {
     @JoinTable( name = "tb_produto_doacao_roupa", joinColumns = @JoinColumn(name = "id_doacao"), inverseJoinColumns = @JoinColumn(name = "id_roupa"))
     private Set<Roupa> roupas = new HashSet<>();
 
-    @OneToMany(mappedBy = "id.doacao")
-    private Set<TransferenciaDoacaoCentro> transferencia = new HashSet<>();
-
-
     public Set<Alimento> getAlimentos() {
         return alimentos;
     }
@@ -49,6 +50,9 @@ public class Doacao implements Serializable {
         return roupas;
     }
 
+    @OneToMany(mappedBy = "id.doacao")
+    private Set<TransferenciaDoacaoCentro> transferencia = new HashSet<>();
+
     @Column(nullable = false)
     private LocalDateTime dataDoacao;
 
@@ -60,6 +64,10 @@ public class Doacao implements Serializable {
 
     public Long getId() {
         return id;
+    }
+
+    public Set<TransferenciaDoacaoCentro> getTransferencia() {
+        return transferencia;
     }
 
     public LocalDateTime getDataDoacao() {
