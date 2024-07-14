@@ -5,9 +5,7 @@ import entities.abstrato.TransferenciaDoacaoCentro;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 public class CentroDistribuicao implements Serializable {
@@ -21,13 +19,26 @@ public class CentroDistribuicao implements Serializable {
     @Column(nullable = false)
     private String nome;
 
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
     @OneToMany(mappedBy = "id.centroDistribuicao")
     private Set<TransferenciaDoacaoCentro> transferencia = new HashSet<>();
 
-    public CentroDistribuicao(){}
+    @ElementCollection
+    @CollectionTable(name = "estoque", joinColumns = @JoinColumn(name = "centro_id"))
+    @MapKeyColumn(name = "descricao_item")
+    @Column(name = "quantidade")
+    private Map<String, Long> estoque;
+
+    public CentroDistribuicao(){
+        this.estoque = new HashMap<>();
+    }
     public CentroDistribuicao(long l, String nome) {
         this.id = id;
         this.nome = nome;
+        this.estoque = new HashMap<>();
     }
 
     public Set<Doacao> getDoacao() {
@@ -52,22 +63,15 @@ public class CentroDistribuicao implements Serializable {
         }
         return count;
     }
-
-    public long countRoupas() {
-        long count = 0;
-        for (TransferenciaDoacaoCentro transferencia : transferencia) {
-            count += transferencia.getDoacao().getRoupas().size();
-        }
-        return count;
+    public Map<String, Long> getEstoque() {
+        return estoque;
     }
 
-    public long countHigienes() {
-        long count = 0;
-        for (TransferenciaDoacaoCentro transferencia : transferencia) {
-            count += transferencia.getDoacao().getHigienes().size();
-        }
-        return count;
+
+    public Long getQuantidadeItem(String descricao) {
+        return estoque.getOrDefault(descricao, 0L);
     }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

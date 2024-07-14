@@ -34,6 +34,10 @@ public class Higiene implements Serializable {
         return doacoes;
     }
 
+    public void setTipoProduto(HigieneEnum tipoProduto) {
+        this.tipoProduto = tipoProduto;
+    }
+
     public HigieneEnum getTipoProduto() {
         return tipoProduto;
     }
