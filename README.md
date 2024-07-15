@@ -13,7 +13,6 @@ Este projeto consiste no desenvolvimento de uma aplicação backend para auxilia
 - **Registro de Abrigos**
   - Cadastro, leitura, edição e exclusão de abrigos.
   - Armazenamento detalhado de informações sobre cada abrigo, incluindo capacidade e ocupação atual.
-  - Validação rigorosa de todos os dados inseridos.
 
 - **Ordem de Pedido**
   - Abrigos podem listar suas necessidades de itens específicos.
