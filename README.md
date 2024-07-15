@@ -32,4 +32,7 @@ Este projeto consiste no desenvolvimento de uma aplicação backend para auxilia
 
 O código-fonte está disponível no GitHub. Sinta-se à vontade para explorar, fazer fork e contribuir para o desenvolvimento deste projeto
 
+## Modelagem projeto 
+https://drive.google.com/file/d/1oFTJnVfTqvbu7PAtjGXK8VQ7cQ2V6fzm/view?usp=sharing
+
 Este README fornece uma visão geral do projeto, suas funcionalidades principais, estrutura de implementação e informações sobre como contribuir. Em caso de dúvidas ou sugestões, sinta-se à vontade para entrar em contato ou abrir uma issue no repositório.
