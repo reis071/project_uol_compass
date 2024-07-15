@@ -6,6 +6,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import entities.abstrato.Doacao;
+import entities.abstrato.Endereco;
 
 @Entity
 public class Abrigo  implements Serializable {
@@ -37,6 +38,9 @@ public class Abrigo  implements Serializable {
     @OneToMany(mappedBy = "abrigo", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Doacao> doacoes = new HashSet<>();
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "endereco_id", referencedColumnName = "id")
+    private Endereco endereco;
 
     public Abrigo(){}
 

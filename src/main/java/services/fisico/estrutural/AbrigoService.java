@@ -5,13 +5,22 @@ import repositories.fisico.estrutural.AbrigoRepository;
 
 import java.util.List;
 
+/**
+ * Serviço para gerenciar operações relacionadas a abrigos.
+ */
 public class AbrigoService {
     private AbrigoRepository abrigoRepository;
 
+    /**
+     * Construtor para injetar o repositório de abrigos.
+     */
     public AbrigoService(AbrigoRepository abrigoRepository) {
         this.abrigoRepository = abrigoRepository;
     }
 
+    /**
+     * Cadastra um novo abrigo.
+     */
     public void cadastrarAbrigo(String nome, String responsavel, String telefone, String email, int capacidade) {
         Abrigo abrigo = new Abrigo();
         abrigo.setNome(nome);
@@ -22,6 +31,9 @@ public class AbrigoService {
         abrigoRepository.save(abrigo);
     }
 
+    /**
+     * Edita um abrigo existente.
+     */
     public void editarAbrigo(Long id, String nome, String responsavel, String telefone, String email, int capacidade) {
         Abrigo abrigo = abrigoRepository.findById(id);
         if (abrigo != null) {
@@ -34,18 +46,32 @@ public class AbrigoService {
         }
     }
 
+    /**
+     * Exclui um abrigo pelo seu ID.
+     */
     public void excluirAbrigo(Long id) {
         abrigoRepository.delete(id);
     }
 
+    /**
+     * Lista todos os abrigos.
+
+     */
     public List<Abrigo> listarAbrigos() {
         return abrigoRepository.findAll();
     }
 
+    /**
+     * Busca um abrigo pelo seu ID.
+
+     */
     public Abrigo buscarAbrigoPorId(Long id) {
         return abrigoRepository.findById(id);
     }
 
+    /**
+     * Conta a quantidade de alimentos recebidos por um abrigo.
+     */
     public long countAlimentosRecebidos(Long abrigoId) {
         Abrigo abrigo = abrigoRepository.findById(abrigoId);
         if (abrigo != null) {
@@ -54,6 +80,9 @@ public class AbrigoService {
         return 0;
     }
 
+    /**
+     * Conta a quantidade de roupas recebidas por um abrigo.
+     */
     public long countRoupasRecebidas(Long abrigoId) {
         Abrigo abrigo = abrigoRepository.findById(abrigoId);
         if (abrigo != null) {
@@ -62,6 +91,9 @@ public class AbrigoService {
         return 0;
     }
 
+    /**
+     * Conta a quantidade de produtos de higiene recebidos por um abrigo.
+     */
     public long countHigienesRecebidas(Long abrigoId) {
         Abrigo abrigo = abrigoRepository.findById(abrigoId);
         if (abrigo != null) {
@@ -70,6 +102,9 @@ public class AbrigoService {
         return 0;
     }
 
+    /**
+     * Calcula a ocupação de um abrigo com base nos itens recebidos.
+     */
     public double calcularOcupacao(Long abrigoId) {
         Abrigo abrigo = buscarAbrigoPorId(abrigoId);
         if (abrigo != null) {

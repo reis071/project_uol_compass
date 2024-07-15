@@ -3,10 +3,8 @@ package repositories.abstrato;
 import entities.abstrato.pk.TransferenciaDoacaoCentroPk;
 import entities.abstrato.TransferenciaDoacaoCentro;
 
-import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 
-import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 
 public class TransferenciaDoacaoCentroRepository {

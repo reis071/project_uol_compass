@@ -1,7 +1,6 @@
-package entities.abstrato;
+package entities.abstrato.mediador;
 
 import javax.persistence.*;
-import java.util.Objects;
 
 @Entity
 public class NecessidadeAbrigo {

@@ -1,6 +1,7 @@
 package entities.fisico.estrutural;
 
 import entities.abstrato.Doacao;
+import entities.abstrato.Endereco;
 import entities.abstrato.TransferenciaDoacaoCentro;
 
 import javax.persistence.*;
@@ -19,9 +20,9 @@ public class CentroDistribuicao implements Serializable {
     @Column(nullable = false)
     private String nome;
 
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "endereco_id", referencedColumnName = "id")
+    private Endereco endereco;
 
     @OneToMany(mappedBy = "id.centroDistribuicao")
     private Set<TransferenciaDoacaoCentro> transferencia = new HashSet<>();
@@ -32,15 +33,19 @@ public class CentroDistribuicao implements Serializable {
     @Column(name = "quantidade")
     private Map<String, Long> estoque;
 
-    public CentroDistribuicao(){
+
+    public CentroDistribuicao() {
         this.estoque = new HashMap<>();
     }
+
     public CentroDistribuicao(long l, String nome) {
         this.id = id;
         this.nome = nome;
         this.estoque = new HashMap<>();
     }
-
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
     public Set<Doacao> getDoacao() {
         Set<Doacao> set = new HashSet<>();
         for (TransferenciaDoacaoCentro t : transferencia) {
@@ -56,13 +61,32 @@ public class CentroDistribuicao implements Serializable {
     public String getNome() {
         return nome;
     }
-    public long countAlimentos() {
+
+    public long contarAlimentos() {
         long count = 0;
         for (TransferenciaDoacaoCentro transferencia : transferencia) {
             count += transferencia.getDoacao().getAlimentos().size();
         }
         return count;
     }
+
+    public long contarProdutosHigiene() {
+        long count = 0;
+        for (TransferenciaDoacaoCentro transferencia : transferencia) {
+            count += transferencia.getDoacao().getHigienes().size();
+        }
+        return count;
+    }
+
+    public long contarRoupa() {
+        long count = 0;
+        for (TransferenciaDoacaoCentro transferencia : transferencia) {
+            count += transferencia.getDoacao().getRoupas().size();
+        }
+        return count;
+    }
+
+
     public Map<String, Long> getEstoque() {
         return estoque;
     }
@@ -72,6 +96,22 @@ public class CentroDistribuicao implements Serializable {
         return estoque.getOrDefault(descricao, 0L);
     }
 
+    public void adicionarItemAoEstoque(String descricao, Long quantidade) {
+        estoque.put(descricao, estoque.getOrDefault(descricao, 0L) + quantidade);
+    }
+
+    public boolean removerItemDoEstoque(String descricao, Long quantidade) {
+        Long quantidadeAtual = estoque.get(descricao);
+        if (quantidadeAtual == null || quantidadeAtual < quantidade) {
+            return false;
+        }
+        if (quantidadeAtual.equals(quantidade)) {
+            estoque.remove(descricao);
+        } else {
+            estoque.put(descricao, quantidadeAtual - quantidade);
+        }
+        return true;
+    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

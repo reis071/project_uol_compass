@@ -2,6 +2,7 @@ package initializerData;
 
 import entities.fisico.estrutural.CentroDistribuicao;
 import repositories.abstrato.DoacaoRepository;
+import repositories.abstrato.PedidoRepository;
 import repositories.abstrato.TransferenciaDoacaoCentroRepository;
 import repositories.fisico.estrutural.AbrigoRepository;
 import repositories.fisico.estrutural.CentroDistribuicaoRepository;
@@ -10,9 +11,7 @@ import repositories.fisico.produto.HigieneRepository;
 import repositories.fisico.produto.RoupaRepository;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-
+//iniciar repositories
 public class DataInitializer {
         private final RoupaRepository roupaRepository;
         private final HigieneRepository higieneRepository;
@@ -21,6 +20,7 @@ public class DataInitializer {
         private final DoacaoRepository doacaoRepository ;
         private final AbrigoRepository abrigoRepository;
         private final CentroDistribuicaoRepository centroDistribuicaoRepository;
+        private final PedidoRepository pedidoRepository;
 
         public DataInitializer(EntityManager em) {
         this.roupaRepository = new RoupaRepository(em);
@@ -30,6 +30,11 @@ public class DataInitializer {
         this.doacaoRepository = new DoacaoRepository(em);
         this.abrigoRepository = new AbrigoRepository(em);
         this.centroDistribuicaoRepository = new CentroDistribuicaoRepository(em);
+        this.pedidoRepository = new PedidoRepository(em);
+    }
+
+    public PedidoRepository getPedidoRepository() {
+        return pedidoRepository;
     }
 
     public RoupaRepository getRoupaRepository() {

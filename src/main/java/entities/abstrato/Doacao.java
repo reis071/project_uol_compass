@@ -1,5 +1,6 @@
 package entities.abstrato;
 
+import entities.abstrato.TransferenciaDoacaoCentro;
 import entities.fisico.estrutural.Abrigo;
 import entities.fisico.produtos.Alimento;
 import entities.fisico.produtos.Higiene;
