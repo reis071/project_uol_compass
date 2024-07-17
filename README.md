@@ -5,7 +5,7 @@ Este projeto consiste no desenvolvimento de uma aplicação backend para auxilia
 ## Funcionalidades Principais
 
 - **Registro de Doações**
-  - Cadastro, leitura, edição e exclusão de itens doados (alimentos, higiene, roupas).
+  - Cadastro, leitura de itens doados (alimentos, higiene, roupas).
   - Associação de cada item doado a um centro de distribuição específico.
   - Suporte para cadastro de doações via arquivo CSV.
   - Validação para garantir que nenhum centro de distribuição exceda sua capacidade máxima de armazenamento.
